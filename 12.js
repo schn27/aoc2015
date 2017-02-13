@@ -4,8 +4,8 @@ function calc() {
 	var obj = JSON.parse(input);
 
 	var sum = getSumOfNumbers(obj);
-	var sum2 = getSumOfNumbers(obj, function(v) {
-		return v === "red";
+	var sum2 = getSumOfNumbers(obj, function(obj, value) {
+		return !Array.isArray(obj) && (value === "red");
 	});
 
 	return sum + " " + sum2;
@@ -17,7 +17,7 @@ function getSumOfNumbers(obj, filter) {
 	for (var i in obj) {
 		var o = obj[i];
 
-		if (!Array.isArray(obj) && filter && filter(o)) {
+		if (filter && filter(obj, o)) {
 			return 0;
 		}
 
