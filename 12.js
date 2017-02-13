@@ -1,10 +1,10 @@
 "use strict";
 
 function calc() {
-	var obj = JSON.parse(input);
+	var json = JSON.parse(input);
 
-	var sum = getSumOfNumbers(obj);
-	var sum2 = getSumOfNumbers(obj, function(obj, value) {
+	var sum = getSumOfNumbers(json);
+	var sum2 = getSumOfNumbers(json, function(obj, value) {
 		return !Array.isArray(obj) && (value === "red");
 	});
 
