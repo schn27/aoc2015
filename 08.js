@@ -1,11 +1,11 @@
 "use strict";
 
 function calc() {
-	var codeLength = 0;
-	var inMemoryLength = 0;
-	var encodedLength = 0;
+	let codeLength = 0;
+	let inMemoryLength = 0;
+	let encodedLength = 0;
 
-	input.split("\n").forEach(function(line) {
+	input.split("\n").forEach(line => {
 		codeLength += line.length;
 		inMemoryLength += parseString(line).length;
 		encodedLength += encodeString(line).length;
@@ -17,9 +17,9 @@ function calc() {
 function parseString(str) {
 	str = str.slice(1, str.length - 1);
 
-	var result = [];
+	let result = [];
 
-	for (var i = 0; i < str.length; ++i) {
+	for (let i = 0; i < str.length; ++i) {
 		if (str[i] == "\\") {
 			if (str[i + 1] == "x") {
 				result.push(String.fromCharCode(parseInt(str.slice(i + 2, i + 4), 16)));
@@ -37,20 +37,10 @@ function parseString(str) {
 }
 
 function encodeString(str) {
-	var result = [];
-
-	str.split("").forEach(function(c) {
-		if (c == "\"" || c == "\\") {
-			result.push("\\");
-		}
-
-		result.push(c);
-	});
-
-	return "\"" + result.join("") + "\"";
+	return str.split("").reduce((a, c) => a + ((c == "\"" || c == "\\") ? "\\" + c : c), "\"") + "\"";
 }
 
-var input = String.raw`"azlgxdbljwygyttzkfwuxv"
+const input = String.raw`"azlgxdbljwygyttzkfwuxv"
 "v\xfb\"lgs\"kvjfywmut\x9cr"
 "merxdhj"
 "dwz"

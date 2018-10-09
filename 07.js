@@ -1,12 +1,12 @@
 "use strict";
 
 function calc() {
-	var instructions = parseInput();
-	var wires = {};
+	const instructions = parseInput();
+	let wires = {};
 
 	evalAll(instructions, wires);
 	
-	var wires2 = {"b": wires["a"]};
+	let wires2 = {"b": wires["a"]};
 
 	evalAll(instructions, wires2);
 
@@ -14,26 +14,27 @@ function calc() {
 }
 
 function parseInput() {
-	return input.split("\n").map(function(line) {
-		var sides = line.split(" -> ");
-		var leftSideTokens = sides[0].split(" ");
+	return input.split("\n").map(line => {
+		const sides = line.split(" -> ");
+		const leftSideTokens = sides[0].split(" ");
 
-		if (leftSideTokens.length == 1) {
+		switch (leftSideTokens.length) {
+		case 1:
 			return {op: "CONNECT", src: [leftSideTokens[0]], dst: sides[1]};	
-		} else if (leftSideTokens.length == 2) {
+		case 2:
 			return {op: leftSideTokens[0], src: [leftSideTokens[1]], dst: sides[1]};
-		} else if (leftSideTokens.length == 3) {
+		case 3:
 			return {op: leftSideTokens[1], src: [leftSideTokens[0], leftSideTokens[2]], dst: sides[1]};
+		default:
+			throw new Error("unknown instruction: " + line);
 		}
-
-		throw new Error("unknown instruction: " + line);
 	});
 }
 
 function evalAll(instructions, wires) {
 		while (instructions.length > 0) {
 		instructions = instructions.filter(function(instruction) {
-			var value = evalInstruction(instruction, wires);
+			const value = evalInstruction(instruction, wires);
 			
 			if (wires[instruction.dst] == undefined) {
 				wires[instruction.dst] = value;	
@@ -45,8 +46,8 @@ function evalAll(instructions, wires) {
 }
 
 function evalInstruction(instruction, wires) {
-	var arg1 = getValue(instruction.src[0], wires);
-	var arg2 = getValue(instruction.src[1], wires);
+	const arg1 = getValue(instruction.src[0], wires);
+	const arg2 = getValue(instruction.src[1], wires);
 
 	if (arg1 == undefined || (instruction.src[1] != undefined && arg2 == undefined)) {
 		return undefined;
@@ -65,17 +66,17 @@ function evalInstruction(instruction, wires) {
 		return (arg1 << arg2) & 0xFFFF;
 	case "RSHIFT":
 		return (arg1 >> arg2) & 0xFFFF;
+	default:
+		return undefined;
 	}
-
-	return undefined;
 }
 
 function getValue(arg, wires) {
-	var value = parseInt(arg);
+	const value = parseInt(arg);
 	return !isNaN(value) ? value : wires[arg];
 }
 
-var input = `af AND ah -> ai
+const input = `af AND ah -> ai
 NOT lk -> ll
 hz RSHIFT 1 -> is
 NOT go -> gp

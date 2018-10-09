@@ -1,22 +1,22 @@
 "use strict";
 
 function calc() {
-	var distMatrix = parseInput();
+	const distMatrix = parseInput();
 
-	var targets = [];
-	for (var key in distMatrix) {
+	const targets = [];
+	for (let key in distMatrix) {
 		targets.push(key);
 	}
 
-	var optimalLength = null;
-	var longestLength = 0;
+	let optimalLength = null;
+	let longestLength = 0;
 
-	for (var p = 0, totalPermutations = getFactorial(targets.length); p < totalPermutations; ++p) {
-		var arrangedTargets = getPermutation(targets, p);
-		var prevTarget = arrangedTargets[0];
-		var length = 0;
+	for (let p = 0, totalPermutations = getFactorial(targets.length); p < totalPermutations; ++p) {
+		let arrangedTargets = getPermutation(targets, p);
+		let prevTarget = arrangedTargets[0];
+		let length = 0;
 
-		for (var i = 1; i < arrangedTargets.length; ++i) {
+		for (let i = 1; i < arrangedTargets.length; ++i) {
 			length += distMatrix[prevTarget][arrangedTargets[i]];
 			prevTarget = arrangedTargets[i];
 		}
@@ -35,9 +35,9 @@ function calc() {
 
 // http://stackoverflow.com/questions/7918806/finding-n-th-permutation-without-computing-others/24257996#24257996
 function getPermutation(atoms, index) {
-	var src = atoms.slice(), dest = [], item;
+	let src = atoms.slice(), dest = [], item;
 
-	for (var i = 0; i < atoms.length; ++i) {
+	for (let i = 0; i < atoms.length; ++i) {
 		item = index % src.length;
 		index = Math.floor(index / src.length);
 		dest.push(src[item]);
@@ -48,7 +48,7 @@ function getPermutation(atoms, index) {
 }
 
 function getFactorial(n) {
-	var result = n;
+	let result = n;
 	
 	while (--n > 0) {
 		result *= n;
@@ -58,13 +58,13 @@ function getFactorial(n) {
 }
 
 function parseInput() {
-	var table = [];
+	let table = [];
 
-	input.split("\n").forEach(function(line) {
-		var tokens = line.split(" ");
-		var city1 = tokens[0];
-		var city2 = tokens[2];
-		var distance = +tokens[4];
+	input.split("\n").forEach(line => {
+		const tokens = line.split(" ");
+		const city1 = tokens[0];
+		const city2 = tokens[2];
+		const distance = +tokens[4];
 
 		if (table[city1] == undefined) {
 			table[city1] = [];
@@ -82,7 +82,7 @@ function parseInput() {
 	return table;
 }
 
-var input = `AlphaCentauri to Snowdin = 66
+const input = `AlphaCentauri to Snowdin = 66
 AlphaCentauri to Tambi = 28
 AlphaCentauri to Faerun = 60
 AlphaCentauri to Norrath = 34

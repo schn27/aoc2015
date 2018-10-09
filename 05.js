@@ -1,21 +1,15 @@
 "use strict";
 
 function calc() {
-	var words = input.split("\n");
+	const words = input.split("\n");
 
-	var niceWords = words.filter(function(word) {
-		return isNice(word);
-	});
-
-	var niceWords2 = words.filter(function(word) {
-		return isNice2(word);
-	});
-
-	return niceWords.length + " " + niceWords2.length;
+	return words.filter(w => isNice(w)).length + " " + words.filter(w => isNice2(w)).length;
 }
 
 function isNice(word) {
-	return hasAtLeastThreeVowels(word, "aeiou".split("")) && hasDoubleLetter(word) && !hasPattern(word, ["ab", "cd", "pq", "xy"]);
+	return hasAtLeastThreeVowels(word, "aeiou".split("")) 
+		&& hasDoubleLetter(word) 
+		&& !hasPattern(word, ["ab", "cd", "pq", "xy"]);
 }
 
 function isNice2(word) {
@@ -23,9 +17,9 @@ function isNice2(word) {
 }
 
 function hasAtLeastThreeVowels(word, vowels) {
-	var vowelCounter = 0;
+	let vowelCounter = 0;
 
-	for (var i = 0; i < word.length; ++i) {
+	for (let i = 0; i < word.length; ++i) {
 		if (vowels.indexOf(word[i]) >= 0) {
 			if (++vowelCounter >= 3) {
 				return true;
@@ -37,7 +31,7 @@ function hasAtLeastThreeVowels(word, vowels) {
 }
 
 function hasDoubleLetter(word) {
-	for (var i = 0; i < word.length - 1; ++i) {
+	for (let i = 0; i < word.length - 1; ++i) {
 		if (word[i] == word[i + 1]) {
 			return true;
 		}
@@ -47,7 +41,7 @@ function hasDoubleLetter(word) {
 }
 
 function hasPattern(word, patterns) {
-	for (var i = 0; i < patterns.length; ++i) {
+	for (let i = 0; i < patterns.length; ++i) {
 		if (word.indexOf(patterns[i]) >= 0) {
 			return true;
 		}
@@ -57,10 +51,10 @@ function hasPattern(word, patterns) {
 }
 
 function hasDoublePair(word) {
-	for (var i = 0; i < word.length - 1; ++i) {
-		var pair = word.slice(i, i + 2);
-		var part1 = word.slice(0, i);
-		var part2 = word.slice(i + 2);
+	for (let i = 0; i < word.length - 1; ++i) {
+		const pair = word.slice(i, i + 2);
+		const part1 = word.slice(0, i);
+		const part2 = word.slice(i + 2);
 
 		if (part1.indexOf(pair) >= 0 || part2.indexOf(pair) >= 0) {
 			return true;
@@ -71,7 +65,7 @@ function hasDoublePair(word) {
 }
 
 function hasXyx(word) {
-	for (var i = 0; i < word.length - 2; ++i) {
+	for (let i = 0; i < word.length - 2; ++i) {
 		if (word[i] == word[i + 2]) {
 			return true;
 		}
@@ -80,7 +74,7 @@ function hasXyx(word) {
 	return false;
 }
 
-var input = `zgsnvdmlfuplrubt
+const input = `zgsnvdmlfuplrubt
 vlhagaovgqjmgvwq
 ffumlmqwfcsyqpss
 zztdcqzqddaazdjp

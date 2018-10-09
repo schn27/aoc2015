@@ -1,47 +1,23 @@
 "use strict";
 
 function calc() {
-	var grid = new Grid(1000, 1000);
+	let grid = new Grid(1000, 1000);
 
-	input.split("\n").forEach(function(line) {
-		grid.doCommand(line);
-	});
+	input.split("\n").forEach(line => grid.doCommand(line));
 
 	return grid.getNumberOfLitLights() + " " + grid.getTotalBrightness();
 }
 
 function Grid(width, height) {
-	var lights = createTable();
-	var brightness = createTable();
+	let lights = createTable();
+	let brightness = createTable();
 
-	this.getNumberOfLitLights = function() {
-		var result = 0;
+	this.getNumberOfLitLights = () => getSumOfElements(lights);
 
-		lights.forEach(function(row) {
-			for (var x = 0; x < row.length; ++x) {
-				if (row[x]) {
-					++result;
-				}
-			}
-		});
-
-		return result;
-	}
-
-	this.getTotalBrightness = function() {
-		var result = 0;
-
-		brightness.forEach(function(row) {
-			for (var x = 0; x < row.length; ++x) {
-				result += row[x];
-			}
-		});
-
-		return result;
-	}	
+	this.getTotalBrightness = () => getSumOfElements(brightness);
 
 	this.doCommand = function(command) {
-		var args = command.split(" ");
+		let args = command.split(" ");
 		
 		switch (args[0]) {
 		case "turn":
@@ -53,14 +29,18 @@ function Grid(width, height) {
 		}
 	}
 
-	function setLights(value, rect) {
-		var v = (value == "toggle" ? undefined : (value == "on" ? 1 : 0));
-		var b = (value == "toggle" ? 2 : (value == "on" ? 1 : -1));
+	function getSumOfElements(m) {
+		return m.reduce((a, r) => a + r.reduce((a2, e) => a2 + e, 0), 0);
+	}
 
-		for (var y = rect[1]; y <= rect[3]; ++y) {
-			var row = lights[y];
-			var rowB = brightness[y];
-			for (var x = rect[0]; x <= rect[2]; ++x) {
+	function setLights(value, rect) {
+		let v = (value == "toggle" ? undefined : (value == "on" ? 1 : 0));
+		let b = (value == "toggle" ? 2 : (value == "on" ? 1 : -1));
+
+		for (let y = rect[1]; y <= rect[3]; ++y) {
+			let row = lights[y];
+			let rowB = brightness[y];
+			for (let x = rect[0]; x <= rect[2]; ++x) {
 				row[x] = (v != undefined) ? v : (row[x] == 1 ? 0 : 1);
 				rowB[x] = Math.max(0, rowB[x] + b);
 			}
@@ -68,14 +48,14 @@ function Grid(width, height) {
 	}
 
 	function parseCoords(arg1, arg2) {
-		return [arg1, arg2].join(",").split(",").map(function(v) {return +v;});
+		return [arg1, arg2].join(",").split(",").map(Number);
 	}
 
 	function createTable() {
-		var table = [];
+		let table = [];
 
-		for (var y = 0; y < height; ++y) {
-			var row = new Array(width);
+		for (let y = 0; y < height; ++y) {
+			let row = new Array(width);
 			row.fill(0);
 			table.push(row);
 		}
@@ -84,7 +64,7 @@ function Grid(width, height) {
 	}
 }
 
-var input = `turn on 489,959 through 759,964
+const input = `turn on 489,959 through 759,964
 turn off 820,516 through 871,914
 turn off 427,423 through 929,502
 turn on 774,14 through 977,877

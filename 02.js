@@ -1,17 +1,12 @@
 "use strict";
 
 function calc() {
-	var paper = 0;
-	var ribbon = 0;
+	let paper = 0;
+	let ribbon = 0;
 
 	input.split("\n").forEach(function(line) {
-		var sides = line.split("x").map(function(side) {
-			return +side;
-		});
-
-		sides.sort(function(a, b) {
-			return a - b;
-		});
+		let sides = line.split("x").map(Number);
+		sides.sort((a, b) => a - b);
 
 		paper += 3 * sides[0] * sides[1] + 2 * sides[0] * sides[2] + 2 * sides[1] * sides[2];
 		ribbon += 2 * (sides[0] + sides[1]) + sides[0] * sides[1] * sides[2];
@@ -20,7 +15,7 @@ function calc() {
 	return paper + " " + ribbon;
 }
 
-var input = `29x13x26
+const input = `29x13x26
 11x11x14
 27x2x5
 6x10x13
