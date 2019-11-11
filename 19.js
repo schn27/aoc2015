@@ -1,67 +1,36 @@
 "use strict";
 
 function calc() {
-	var data = parseInput(input);
+	let lines = input.split("\n").filter(e => e.trim() !== "");
+	
+	const molecule = lines.pop();
+	
+	let table = [];
+	lines.forEach(e => table.push({from: e.split(" => ")[0], to: e.split(" => ")[1]}));
 
-	return getAllPossible1StepMolecules(data.molecule, data.replacements).length + " " + 
-		   getStepsFor(data.molecule, "e", data.replacements);
+	return part1(molecule, table) + " " + part2(molecule, table);
 }
 
-function getAllPossible1StepMolecules(molecule, replacements) {
-	var molecules = [];
+function part1(molecule, table) {
+	let results = {};
 
-	for (var pattern in replacements) {
-		var items = molecule.split(pattern);
-
-		for (var i = 1; i < items.length; ++i) {
-			var before = items.slice(0, i).join(pattern);
-			var after = items.slice(i).join(pattern);
-
-			replacements[pattern].forEach(function(value) {
-				molecules[[before, after].join(value)] = 1;
-			});
-		}
-	}
-
-	return Object.keys(molecules);
-}
-
-function getStepsFor(dst, replacements, src, step) {
-	if (dst == src || step > 10000) {
-		return step | 0;
-	}
-
-	var steps = getAllPossible1StepMolecules(src, replacements).map(function(candidate) {
-		return getStepsFor(dst, replacements, candidate, step + 1);
-	});
-
-	return steps[steps.indexOf(Math.min.apply(null, steps))];
-}
-
-function parseInput(input) {
-	var res = {
-		replacements: [],
-		molecule: ""
-	};
-
-	input.split("\n").forEach(function(line) {
-		var items = line.split(" ");
-
-		if (items.length >= 3) {
-			if (res.replacements[items[0]] == null) {
-				res.replacements[items[0]] = [];
-			}
-
-			res.replacements[items[0]].push(items[2]);
-		} else if (items.length == 1) {
-			res.molecule = items[0];
+	table.forEach(e => {
+		const parts = molecule.split(e.from);
+		for (let i = 1; i < parts.length; ++i) {
+			results[[parts.slice(0, i).join(e.from), parts.slice(i).join(e.from)].join(e.to)] = 1;
 		}
 	});
 
-	return res;
+	results[molecule] = 0;
+
+	return Object.keys(results).reduce((s, k) => s += results[k], 0);	
 }
 
-var input = `Al => ThF
+function part2(molecule, table) {
+	return undefined;
+}
+
+const input = `Al => ThF
 Al => ThRnFAr
 B => BCa
 B => TiB
