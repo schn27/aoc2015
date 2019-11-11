@@ -27,7 +27,30 @@ function part1(molecule, table) {
 }
 
 function part2(molecule, table) {
-	return undefined;
+	return destruct(molecule, table, 1);
+}
+
+function destruct(molecule, table, step) {
+	for (let j = 0; j < table.length; ++j) {
+		const e = table[j];
+		const parts = molecule.split(e.to);
+
+		for (let i = 1; i < parts.length; ++i) {
+			const newMolecule = [parts.slice(0, i).join(e.to), parts.slice(i).join(e.to)].join(e.from);
+
+			if (newMolecule == "e") {
+				return step;
+			}
+
+			const res = destruct(newMolecule, table, step + 1);
+
+			if (res > 0) {
+				return res;
+			}
+		}
+	}
+
+	return 0;
 }
 
 const input = `Al => ThF
