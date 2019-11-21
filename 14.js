@@ -1,55 +1,33 @@
 "use strict";
 
 function calc() {
-	var reindeers = [];	
-	
-	input.split("\n").forEach(function(line) {
-		var words = line.split(" ");
-		reindeers.push(new Reindeer(+words[3], +words[6], +words[13]));
+	let reindeers = input.split("\n").map(line => {	
+		let words = line.split(" ");
+		return new Reindeer(+words[3], +words[6], +words[13]);
 	});
 
-	for (var t = 0; t < 2503; ++t) {
-		reindeers.forEach(function(reindeer) {
-			reindeer.tick();
-		});
-
-		var leaders = getLeaders(reindeers, "distance");
-
-		leaders.forEach(function(reindeer) {
-			++reindeer.score;
-		});
+	for (let t = 0; t < 2503; ++t) {
+		reindeers.forEach(reindeer => reindeer.tick());
+		getLeaders(reindeers, "distance").forEach(reindeer => ++reindeer.score);
 	}
 
-	var bestDistance = getLeaders(reindeers, "distance")[0].distance;
-	var bestScore = getLeaders(reindeers, "score")[0].score;
+	let bestDistance = getLeaders(reindeers, "distance")[0].distance;
+	let bestScore = getLeaders(reindeers, "score")[0].score;
 
 	return bestDistance + " " + bestScore;
 }
 
 function getLeaders(reindeers, property) {
-	var bestValue = 0;
-	var leaders = [];
-
-	reindeers.forEach(function(reindeer) {
-		if (reindeer[property] > bestValue) {
-			bestValue = reindeer[property];
-			leaders = [];
-			leaders.push(reindeer);
-		} else if (reindeer[property] == bestValue) {
-			leaders.push(reindeer);
-		}
-	});
-
-	return leaders;
+	return reindeers.sort((a, b) => b[property] - a[property]).filter(e => e[property] == reindeers[0][property]);
 }
 
 function Reindeer(speed, dutyTime, restTime) {
-	var timer = dutyTime;
+	let timer = dutyTime;
 
 	this.distance = 0;
 	this.score = 0;
 
-	this.tick = function() {
+	this.tick = () => {
 		if (timer > 0) {
 			this.distance += speed;
 
@@ -62,7 +40,7 @@ function Reindeer(speed, dutyTime, restTime) {
 	}
 }
 
-var input = `Vixen can fly 19 km/s for 7 seconds, but then must rest for 124 seconds.
+const input = `Vixen can fly 19 km/s for 7 seconds, but then must rest for 124 seconds.
 Rudolph can fly 3 km/s for 15 seconds, but then must rest for 28 seconds.
 Donner can fly 19 km/s for 9 seconds, but then must rest for 164 seconds.
 Blitzen can fly 19 km/s for 9 seconds, but then must rest for 158 seconds.

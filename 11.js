@@ -1,8 +1,8 @@
 "use strict";
 
 function calc() {
-	var password1 = getNextPassword(input);
-	var password2 = getNextPassword(password1);
+	let password1 = getNextPassword(input);
+	let password2 = getNextPassword(password1);
 
 	return password1 + " " + password2;
 }
@@ -16,9 +16,9 @@ function getNextPassword(password) {
 }
 
 function getIncremented(str) {
-	var res = str.split("");
+	let res = str.split("");
 
-	for (var i = res.length - 1; i >= 0; --i) {
+	for (let i = res.length - 1; i >= 0; --i) {
 		if (res[i] != "z") {
 			res[i] = String.fromCharCode(res[i].charCodeAt(0) + 1);
 			break;
@@ -31,10 +31,10 @@ function getIncremented(str) {
 }
 
 function fixForbiddenLetters(str) {
-	var res = [];
-	var found = false;
+	let res = [];
+	let found = false;
 
-	str.split("").forEach(function(c) {
+	str.split("").forEach(c => {
 		if (found) {
 			c = "a";
 		} else if (c == "i" || c == "o" || c == "l") {
@@ -49,7 +49,7 @@ function fixForbiddenLetters(str) {
 }
 
 function hasIncreasingTriple(str) {
-	for (var i = 0; i < str.length - 2; ++i) {
+	for (let i = 0; i < str.length - 2; ++i) {
 		if ((str.charCodeAt(i + 1) == str.charCodeAt(i) + 1) && (str.charCodeAt(i + 2) == str.charCodeAt(i + 1) + 1)) {
 			return true;
 		}
@@ -59,9 +59,9 @@ function hasIncreasingTriple(str) {
 }
 
 function hasTwoPairs(str) {
-	var pairs = 0;
+	let pairs = 0;
 
-	for (var i = 0; i < str.length - 1; ++i) {
+	for (let i = 0; i < str.length - 1; ++i) {
 		if (str[i] == str[i + 1]) {
 			if (++pairs >= 2) {
 				return true;
@@ -74,4 +74,4 @@ function hasTwoPairs(str) {
 	return false;
 }
 
-var input = "hepxcrrq";
+const input = "hepxcrrq";

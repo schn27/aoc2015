@@ -1,7 +1,7 @@
 "use strict";
 
 function calc() {
-	var sueX = {
+	const sueX = {
 		children: 3,
 		cats: 7,
 		samoyeds: 2,
@@ -14,10 +14,10 @@ function calc() {
 		perfumes: 1
 	};
 
-	var sues = parseInput();
+	let sues = parseInput();
 
-	var filter1 = function(sue, part2) {
-		for (var key in sue) {
+	let filter1 = (sue, part2) => {
+		for (let key in sue) {
 			if (key != "number" && sue[key] != sueX[key]) {
 				return false;
 			}
@@ -26,8 +26,8 @@ function calc() {
 		return true;
 	};
 
-	var filter2 = function(sue,) {
-		for (var key in sue) {
+	let filter2 = sue => {
+		for (let key in sue) {
 			if (key == "number") {
 				continue;
 			} else if (key == "cats" || key == "trees") {
@@ -50,24 +50,19 @@ function calc() {
 }
 
 function parseInput() {
-	var res = [];
-
-	input.split("\n").forEach(function(line) {
-		var o = {};
+	return input.split("\n").map(line => {
+		let o = {};
 
 		o.number = +line.split(":")[0].split(" ")[1];
 
-		line.substr(line.indexOf(":") + 1).split(",").forEach(function(property) {
-			o[property.split(":")[0].substr(1)] = +property.split(":")[1];
-		});
+		line.substr(line.indexOf(":") + 1).split(",").forEach(property => 
+			o[property.split(":")[0].substr(1)] = +property.split(":")[1]);
 
-		res.push(o);
+		return o;
 	});
-
-	return res;
 }
 
-var input = `Sue 1: goldfish: 9, cars: 0, samoyeds: 9
+const input = `Sue 1: goldfish: 9, cars: 0, samoyeds: 9
 Sue 2: perfumes: 5, trees: 8, goldfish: 8
 Sue 3: pomeranians: 2, akitas: 1, trees: 5
 Sue 4: goldfish: 10, akitas: 2, perfumes: 9

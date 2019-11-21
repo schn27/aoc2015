@@ -1,37 +1,30 @@
 "use strict";
 
 function calc() {
-	var containers = parseInput(input);
-	var solver = new Solver();
-	var solutions = solver.getSolutions(150, containers);
+	const containers = input.match(/\d+/g).map(Number);
+	let solutions = (new Solver()).getSolutions(150, containers);
 
-	var minSolutions = solutions.slice().sort(function(a, b) {
-		return a.length - b.length;
-	});
-
-	var minLength = minSolutions[0].length;
-
-	minSolutions = minSolutions.filter(function(a) {
-		return a.length == minLength;
-	});
+	let minSolutions = solutions.slice().sort((a, b) => a.length - b.length);
+	const minLength = minSolutions[0].length;
+	minSolutions = minSolutions.filter(e => e.length == minLength);
 
 	return solutions.length + " " + minSolutions.length;
 }
 
 function Solver() {
-	var solutions = [];
+	let solutions = [];
 
 	function solve(amount, containers, used) {
 		if (amount == 0) {
 			solutions.push(used);
 		} else {
 			while (containers.length) {
-				var v = containers[0];
+				let v = containers[0];
 				containers.splice(0, 1);
 
 				if (v <= amount) {
-					var newContainers = containers.slice();
-					var newUsed = used.slice();
+					let newContainers = containers.slice();
+					let newUsed = used.slice();
 					newUsed.push(v);
 					solve(amount - v, newContainers, newUsed);
 				}
@@ -39,24 +32,14 @@ function Solver() {
 		}
 	}
 
-	this.getSolutions = function(amount, containers) {
+	this.getSolutions = (amount, containers) => {
 		solutions = [];
 		solve(amount, containers, []);
 		return solutions;
 	}
 }
 
-function parseInput(input) {
-	var res = [];
-
-	input.split("\n").forEach(function(line) {
-		res.push(parseInt(line, 10));
-	});
-
-	return res;
-}
-
-var input = `43
+const input = `43
 3
 4
 10

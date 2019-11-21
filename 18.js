@@ -1,10 +1,12 @@
 "use strict";
 
 function calc() {
-	var solver = new Solver(parseInput(input));
-	var solver2 = new Solver(parseInput(input), true);
+	const parser = t => t.split("\n").map(line => line.split("").map(c => c == "#" ? 1 : 0));
 
-	for (var i = 0; i < 100; ++i) {
+	let solver = new Solver(parser(input));
+	let solver2 = new Solver(parser(input), true);
+
+	for (let i = 0; i < 100; ++i) {
 		solver.step();
 		solver2.step();
 	}
@@ -17,70 +19,34 @@ function Solver(grid, bug) {
 		applyBug();
 	}
 
-	this.step = function() {
+	this.step = () => {
+		let get = (col, row) => (col >= 0 && row >= 0 && col < grid[0].length && row < grid.length) ? 
+			grid[row][col] : 0;
 
-		var newGrid = [];
+		let getN = (row, col) => 
+				get(col - 1, row - 1) + get(col, row - 1) + get(col + 1, row - 1) + 
+				get(col - 1, row) + get(col + 1, row) + 
+				get(col - 1, row + 1) + get(col, row + 1) + get(col + 1, row + 1);
 
-		for (var row = 0; row < grid.length; ++row) {
-			var newRow = [];
+		let newState = (state, n) => (n == 2) ? state : (n == 3) ? 1 : 0;
 
-			for (var col = 0; col < grid[row].length; ++col) {
-				var sum = get(col - 1, row - 1) + get(col, row - 1) + get(col + 1, row - 1) + 
-						  get(col - 1, row) + get(col + 1, row) + 
-						  get(col - 1, row + 1) + get(col, row + 1) + get(col + 1, row + 1);
-
-				newRow.push(sum == 2 ? get(col, row) : (sum == 3 ? 1 : 0));
-			}
-
-			newGrid.push(newRow);
-		}
-
-		grid = newGrid;
+		grid = grid.map((r, row) => r.map((c, col) => newState(c, getN(row, col))));
 
 		if (bug) {
 			applyBug();
 		}
 	};
 
-	this.getNumberOfOnes = function() {
-		var sum = 0;
-		grid.forEach(function(row) {
-			row.forEach(function(cell) {
-				sum += cell;
-			});
-		});
-
-		return sum;
-	};
-
-	function get(col, row) {
-		return (col >= 0 && row >= 0 && col < grid[0].length && row < grid.length) ? 
-			grid[row][col] : 0;
-	}
+	this.getNumberOfOnes = () => grid.reduce((s, r) => s + r.reduce((rs, e) => rs + e, 0), 0);
 
 	function applyBug() {
-		var width = grid[0].length;
-		var height = grid.length;
+		let width = grid[0].length;
+		let height = grid.length;
 		grid[0][0] = grid[0][width - 1] = grid[height - 1][0] = grid[height - 1][width - 1] = 1;
 	}
 }
 
-function parseInput(input) {
-	var res = [];
-
-	input.split("\n").forEach(function(line) {
-		var row = [];
-		line.split("").forEach(function(c) {
-			row.push(c == "#" ? 1 : 0);
-		});
-
-		res.push(row);
-	});
-
-	return res;
-}
-
-var input = `#..####.##..#...#..#...#...###.#.#.#..#....#.##..#...##...#..#.....##..#####....#.##..##....##.#....
+const input = `#..####.##..#...#..#...#...###.#.#.#..#....#.##..#...##...#..#.....##..#####....#.##..##....##.#....
 .#..#..#..#.###...##..#.##.....#...#..##....#####.##............####.#..######..#.#.##.#...#..#...##
 #.....##.##.##.#..##.#..###...#.#.#..##..###.####.####.#.####.#...##.#..###.........#.###...#....###
 #.###..#######..##..#.....##.#.#.###.#.##..#.##..##.##.#.##...###.#...#.#####.#.##..#.#####..#.#####

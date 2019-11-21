@@ -1,27 +1,27 @@
 "use strict";
 
 function calc() {
-	var persons = new Persons();
+	let persons = new Persons();
 	return getOptimalHappiness(persons, false) + " " + getOptimalHappiness(persons, true);
 }
 
 function getOptimalHappiness(persons, withme) {
-	var names = persons.getNames();
+	let names = persons.getNames();
 
 	if (withme) {
 		names.push("me");
 	}
 
-	var optimalHappiness = undefined;
+	let optimalHappiness = undefined;
 
-	for (var p = 0, totalPermutations = getFactorial(names.length); p < totalPermutations; ++p) {
-		var arrangedNames = getPermutation(names, p);
+	for (let p = 0, totalPermutations = getFactorial(names.length); p < totalPermutations; ++p) {
+		let arrangedNames = getPermutation(names, p);
 
-		var happiness = 0;
+		let happiness = 0;
 
-		for (var i = 0; i < arrangedNames.length; ++i) {
-			var name1 = arrangedNames[i];
-			var name2 = arrangedNames[(i + 1) % arrangedNames.length];
+		for (let i = 0; i < arrangedNames.length; ++i) {
+			let name1 = arrangedNames[i];
+			let name2 = arrangedNames[(i + 1) % arrangedNames.length];
 			
 			if (name1 != "me" && name2 != "me") {
 				happiness += persons.getHappinessFor(name1, name2);
@@ -38,11 +38,11 @@ function getOptimalHappiness(persons, withme) {
 }
 
 function Persons() {
-	var names = [];
-	var table = [];
+	let names = [];
+	let table = [];
 
 	function getNameIndex(name) {
-		var index = names.indexOf(name);
+		let index = names.indexOf(name);
 
 		if (index >= 0) {
 			return index;
@@ -52,19 +52,15 @@ function Persons() {
 		}
 	}
 
-	this.getNames = function() {
-		return names.slice();
-	};
+	this.getNames = () => names.slice();
 
-	this.getHappinessFor = function(name1, name2) {
-		return table[getNameIndex(name1)][getNameIndex(name2)];
-	};
+	this.getHappinessFor = (name1, name2) => table[getNameIndex(name1)][getNameIndex(name2)];
 
-	input.split("\n").forEach(function(line) {
-		var tokens = line.split(" ");
-		var index1 = getNameIndex(tokens[0]);
-		var index2 = getNameIndex(tokens[10].split(".")[0]);
-		var points = (tokens[2] == "gain" ? 1 : -1) * (+tokens[3]);
+	input.split("\n").forEach(line => {
+		let tokens = line.split(" ");
+		let index1 = getNameIndex(tokens[0]);
+		let index2 = getNameIndex(tokens[10].split(".")[0]);
+		let points = (tokens[2] == "gain" ? 1 : -1) * (+tokens[3]);
 
 		if (table[index1] == undefined) {
 			table[index1] = [];
@@ -76,9 +72,9 @@ function Persons() {
 
 // http://stackoverflow.com/questions/7918806/finding-n-th-permutation-without-computing-others/24257996#24257996
 function getPermutation(atoms, index) {
-	var src = atoms.slice(), dest = [], item;
+	let src = atoms.slice(), dest = [], item;
 
-	for (var i = 0; i < atoms.length; ++i) {
+	for (let i = 0; i < atoms.length; ++i) {
 		item = index % src.length;
 		index = Math.floor(index / src.length);
 		dest.push(src[item]);
@@ -89,7 +85,7 @@ function getPermutation(atoms, index) {
 }
 
 function getFactorial(n) {
-	var result = n;
+	let result = n;
 	
 	while (--n > 0) {
 		result *= n;
@@ -99,7 +95,7 @@ function getFactorial(n) {
 }
 
 
-var input = `Alice would gain 54 happiness units by sitting next to Bob.
+const input = `Alice would gain 54 happiness units by sitting next to Bob.
 Alice would lose 81 happiness units by sitting next to Carol.
 Alice would lose 42 happiness units by sitting next to David.
 Alice would gain 89 happiness units by sitting next to Eric.
