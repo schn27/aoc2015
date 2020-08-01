@@ -4,19 +4,19 @@ const WIN = 1;
 const LOSE = -1;
 const CONTINUE = 0;
 
-function calc() {
-	const store = [
-		{name: "missile", cost: 53, damage: 4, armor: 0, heal: 0, mana: 0, turns: 0},
-		{name: "drain", cost: 73, damage: 2, armor: 0, heal: 2, mana: 0, turns: 0},
-		{name: "shield", cost: 113, damage: 0, armor: 7, heal: 0, mana: 0, turns: 6},
-		{name: "poison", cost: 173, damage: 3, armor: 0, heal: 0, mana: 0, turns: 6},
-		{name: "recharge", cost: 229, damage: 0, armor: 0, heal: 0, mana: 101, turns: 5}
-	];
+const store = [
+	{name: "missile", cost: 53, damage: 4, armor: 0, heal: 0, mana: 0, turns: 0},
+	{name: "drain", cost: 73, damage: 2, armor: 0, heal: 2, mana: 0, turns: 0},
+	{name: "shield", cost: 113, damage: 0, armor: 7, heal: 0, mana: 0, turns: 6},
+	{name: "poison", cost: 173, damage: 3, armor: 0, heal: 0, mana: 0, turns: 6},
+	{name: "recharge", cost: 229, damage: 0, armor: 0, heal: 0, mana: 101, turns: 5}
+];
 
+function calc() {
 	const game1 = createGame(50, 500, input, 0);
 	const game2 = createGame(50, 500, input, 1);
 
-	return getMinMana(store, game1) + ", " + getMinMana(store, game2);
+	return getMinMana(game1) + ", " + getMinMana(game2);
 }
 
 function createBoss(input) {
@@ -43,22 +43,22 @@ function createPlayer(hp, mana) {
 }
 
 function createGame(playerHp, playerMana, input, playerHpDecrease) {
-	return {		
+	return {
 		player: createPlayer(playerHp, playerMana),
 		boss: createBoss(input),
 		spendMana: 0,
-		spells: [],
+		activeSpells: new Array(store.length),
 		playerHpDecrease: playerHpDecrease,
 
 		copy() {
 			const o = {...this};
 			o.player = o.player.copy();
 			o.boss = o.boss.copy();
-			o.spells = o.spells.map(e => ({...e}));
+			o.activeSpells = [...o.activeSpells];
 			return o;
 		},
 
-		doTurn(spell) {
+		doTurn(i) {
 			this.player.hp -= this.playerHpDecrease;
 			
 			if (this.player.hp <= 0) {
@@ -69,7 +69,7 @@ function createGame(playerHp, playerMana, input, playerHpDecrease) {
 				return WIN;
 			}
 
-			if (!this.doCast(spell)) {
+			if (!this.doCast(i)) {
 				return LOSE;
 			}
 
@@ -86,33 +86,36 @@ function createGame(playerHp, playerMana, input, playerHpDecrease) {
 
 		doMagic() {
 			this.player.armor = 0;
-			this.spells = this.spells.filter(s => this.applySpell(s));
+			for (let i = 0; i < store.length; ++i) {
+				if (this.activeSpells[i] > 0) {
+					this.applySpell(i);
+				}
+			}
 			return this.boss.hp <= 0;
 		},
 
-		applySpell(spell) {
+		applySpell(i) {
+			const spell = store[i];
+				
 			this.boss.hp -= spell.damage;
 			this.player.armor += spell.armor;
 			this.player.hp += spell.heal;
 			this.player.mana += spell.mana;
-			return --spell.turns > 0;
+			--this.activeSpells[i];
 		},
 
-		doCast(spell) {
-			const isActiveSpell = this.spells.filter(s => s.name == spell.name).length != 0;
-			const isEnoughMana = this.player.mana >= spell.cost;
-
-			if (isActiveSpell || !isEnoughMana) {
+		doCast(i) {
+			if ((this.activeSpells[i] > 0) || (this.player.mana < store[i].cost)) {
 				return false;
 			}
 
-			this.player.mana -= spell.cost;
-			this.spendMana += spell.cost;
+			this.player.mana -= store[i].cost;
+			this.spendMana += store[i].cost;
+			
+			this.activeSpells[i] = store[i].turns;
 
-			if (spell.turns == 0) {
-				this.applySpell(spell);
-			} else {
-				this.spells.push(spell);
+			if (store[i].turns == 0) {
+				this.applySpell(i);
 			}
 
 			return true;
@@ -125,7 +128,7 @@ function createGame(playerHp, playerMana, input, playerHpDecrease) {
 	};
 }
 
-function getMinMana(store, game) {
+function getMinMana(game) {
 	let res = Infinity;
 
 	const queue = [game];
@@ -133,10 +136,10 @@ function getMinMana(store, game) {
 	while (queue.length > 0) {
 		const currentGame = queue.shift();
 
-		store.forEach(spell => {
-			if (currentGame.spendMana + spell.cost < res) {
+		for (let i = 0; i < store.length; ++i) {
+			if (currentGame.spendMana + store[i].cost < res) {
 				const newGame = currentGame.copy();				
-				const turnRes = newGame.doTurn({...spell});
+				const turnRes = newGame.doTurn(i);
 
 				if (turnRes == WIN) {
 					res = newGame.spendMana;
@@ -144,7 +147,7 @@ function getMinMana(store, game) {
 					queue.push(newGame);
 				}
 			}
-		});
+		}
 	}
 
 	return res;
